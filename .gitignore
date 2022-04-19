@@ -1,3 +1,7 @@
+# Extra things
+.vscode*
+.angular*
+
 # Logs
 logs
 *.log
