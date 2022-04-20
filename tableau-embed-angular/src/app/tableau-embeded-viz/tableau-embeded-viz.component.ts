@@ -17,6 +17,7 @@ export class TableauEmbededVizComponent implements OnInit {
   @Input() divId = ''; 
   @Input() workbookOwner = '';
   @Input() workbookDescription = '';
+  @Input() isFavorite = false;
   
   //  Make sure the dashboard is as wide as the user's screen, and uses a 4:3 aspect ratio
   public getScreenWidth: any;
@@ -33,6 +34,7 @@ export class TableauEmbededVizComponent implements OnInit {
 
   //  Get information about the dashboard
   public dashboardName = '';
+  public viewIsFavorite = this.isFavorite ? "favorite_border" : "favorite_border"
   public thisViz: any;
   ngAfterViewInit() {
     //  Store a reference to this
@@ -48,6 +50,5 @@ export class TableauEmbededVizComponent implements OnInit {
         thisComponent.dashboardName = thisComponent.thisViz.workbook.activeSheet.name;
       });
     }
-
   }
 }

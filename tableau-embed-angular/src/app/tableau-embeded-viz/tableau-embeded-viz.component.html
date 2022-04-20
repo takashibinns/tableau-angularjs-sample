@@ -1,19 +1,20 @@
 <div class="tableau-wrapper">
-        <p>
-            <mat-toolbar>
-                <button mat-icon-button class="example-icon" aria-label="Example icon-button with menu icon">
-                <mat-icon>menu</mat-icon>
-            </button>
+    <p>
+        <mat-toolbar>
+            <img class="tableau-icon" src="./../../assets/tableau-icon.png" />
             <span>{{dashboardName}}</span>
             <span class="example-spacer"></span>
             <button mat-icon-button class="example-icon favorite-icon" aria-label="Example icon-button with heart icon">
-                <mat-icon>favorite</mat-icon>
+                <mat-icon>{{viewIsFavorite}}</mat-icon>
             </button>
-            <button mat-icon-button class="example-icon" aria-label="Example icon-button with share icon">
-                <mat-icon>share</mat-icon>
+            <button mat-icon-button class="example-icon" aria-label="Reset the dashboard">
+                <mat-icon>undo</mat-icon>
             </button>
-            </mat-toolbar>
-          </p>
+            <button mat-icon-button class="example-icon" aria-label="Back button">
+                <mat-icon>cancel</mat-icon>
+            </button>
+        </mat-toolbar>
+    </p>
     <div class="tableau-viz-container">
         <tableau-viz [id]="divId" [src]="vizUrl" width="{{ getScreenWidth}}" height="{{ getScreenHeight}}"></tableau-viz>
     </div>

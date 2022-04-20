@@ -1,6 +1,7 @@
 # Extra things
 .vscode*
 .angular*
+.DS_Store
 
 # Logs
 logs
@@ -106,3 +107,4 @@ dist
 
 # TernJS port file
 .tern-port
+tableau-embed-angular/src/app/tableau-embeded-viz/tableau-embeded-viz.component.css
