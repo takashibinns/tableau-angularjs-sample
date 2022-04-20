@@ -1,6 +1,5 @@
-import { Component, OnInit, Input, HostListener } from '@angular/core';
-
-
+import { Component, OnInit, Input, HostListener, Inject } from '@angular/core';
+import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 const bufferSize = 25;
 @Component({
@@ -10,13 +9,15 @@ const bufferSize = 25;
 })
 export class TableauEmbededVizComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   //  Inherit attributes from the parent component
   @Input() vizUrl = ''; 
   @Input() divId = ''; 
-  @Input() workbookOwner = '';
+  @Input() workbookName = '';
   @Input() workbookDescription = '';
+  @Input() workbookOwner = '';
+  @Input() workbookLastUpdated = '';
   @Input() isFavorite = false;
   
   //  Make sure the dashboard is as wide as the user's screen, and uses a 4:3 aspect ratio
@@ -51,4 +52,36 @@ export class TableauEmbededVizComponent implements OnInit {
       });
     }
   }
+
+  //  Open a modal window with more details of the workbook
+  openDialog() {
+    this.dialog.open(TableauEmbededVizComponentDialog, {
+      minWidth: 350,
+      data: {
+        workbook: {
+          name: this.workbookName,
+          description: this.workbookDescription,
+          owner: this.workbookOwner,
+          lastUpdated: this.workbookLastUpdated
+        }
+      },
+    });
+  }
+}
+
+//  Declare the component for providing more details via a modal window
+export interface DialogData {
+  workbook: {
+    name: 'Workbook Name',
+    description: 'Workbook desc',
+    owner: 'Workbook Owner',
+    lastUpdated: 'today'
+  }
+}
+@Component({
+  selector: 'app-tableau-embeded-viz-details',
+  templateUrl: 'tableau-embeded-viz-details.component.html',
+})
+export class TableauEmbededVizComponentDialog {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 }
