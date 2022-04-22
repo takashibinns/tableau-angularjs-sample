@@ -19,6 +19,6 @@
         </mat-toolbar>
     </p>
     <div class="tableau-viz-container">
-        <tableau-viz [id]="divId" [src]="vizUrl" width="{{ getScreenWidth}}" height="{{ getScreenHeight}}"></tableau-viz>
+        <tableau-viz [id]="divId" [src]="vizUrl" width="{{ getScreenWidth}}" height="{{ getScreenHeight}}" toolbar="{{toolbar}}" token="{{connectedAppToken}}"></tableau-viz>
     </div>
 </div>

@@ -19,6 +19,10 @@ export class TableauEmbededVizComponent implements OnInit {
   @Input() workbookOwner = '';
   @Input() workbookLastUpdated = '';
   @Input() isFavorite = false;
+  @Input() toolbar = 'hidden';
+
+  //  Use Connected Apps for SSO to Tableau Server/Online
+  public connectedAppToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImMzOTM3YWYwLThlNTktNDNkMC04OTY1LTRkYjNmMjRjYzBkNCIsImlzcyI6ImE1NTM1ODllLTU3YzAtNDUwZS1hNjFkLTk4Nzg4OWM4NmRhNyJ9.eyJpc3MiOiJhNTUzNTg5ZS01N2MwLTQ1MGUtYTYxZC05ODc4ODljODZkYTciLCJleHAiOjE2NTA2NjAyMzEuMzU0LCJqdGkiOiI2ZjE3ODljZC1jMGFkLTQwMWYtOGFkYS1jYTlhYjNlNzc1MDEiLCJhdWQiOiJ0YWJsZWF1Iiwic3ViIjoidGJpbm5zQHRhYmxlYXUuY29tIiwic2NwIjpbInRhYmxlYXU6dmlld3M6ZW1iZWQiLCJ0YWJsZWF1Om1ldHJpY3M6ZW1iZWQiXSwiaWF0IjoxNjUwNjU5OTMxfQ.RtwsHfnj9QwMJpJqBtwgaJ5FDRYD-Gs-rr2JheZc7VY";
   
   //  Make sure the dashboard is as wide as the user's screen, and uses a 4:3 aspect ratio
   public getScreenWidth: any;
