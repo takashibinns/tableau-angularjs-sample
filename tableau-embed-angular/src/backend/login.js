@@ -44,13 +44,16 @@ router.post('/', (req, res) => {
 
         //	Get the api token and site id
 		const token = response.data.credentials.token,
-            siteId = response.data.credentials.site.id;
+            siteId = response.data.credentials.site.id,
+            tableauUserId = response.data.credentials.user.id;
 
         //	Return the complete data object
         res.send({
             'encryptedUserId': tableauHelper.encryptUsername(username),
+            'tableauUserId': tableauUserId,
             'apiToken': token,
-            'siteId': siteId
+            'siteId': siteId,
+            'tableauBaseUrl': tableauHelper.tableauEmbedBaseUrl()
         })
     })
     .catch(function (error) {

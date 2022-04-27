@@ -38,6 +38,19 @@ const helper = {
             project: tableauProject
         }
     },
+    //  Build the Tableau Embed base URL
+    tableauEmbedBaseUrl: function(){
+
+        //  Embed API calls have a different base url, depending on what site is being used
+        if (tableauSite.length>0){
+            //  Using a named site
+            return `${tableauBaseUrl}/t/${tableauSite}`;
+        } else {
+            //  Using the default site
+            return `${tableauBaseUrl}`;
+        }
+
+    },
     //  Build the Tableau REST API base URL
     tableauRestBaseUrl: function(siteId){
         //  REST API calls have a different base url, depending on what site is being used

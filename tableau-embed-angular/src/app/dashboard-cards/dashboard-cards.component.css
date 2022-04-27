@@ -1,0 +1,17 @@
+.dashboard-card {
+    min-width: 300px;
+    max-width: 500px;
+  }
+
+  .content {
+    padding: 16px;
+}
+
+.content > mat-card {
+    width: 300px;
+}
+.tableau-preview {
+  height: 200px;
+  width: 200px;
+  margin-left: 0;
+}

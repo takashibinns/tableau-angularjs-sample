@@ -1,7 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const btoa = require('btoa');
 const tableauHelper = require('./tableau-helper');
+
+let arrayBufferToBase64 = (buffer) => {
+    var binary = '';
+    var bytes = [].slice.call(new Uint8Array(buffer));
+    bytes.forEach((b) => binary += String.fromCharCode(b));
+    return window.btoa(binary);
+  }
 
 //  Get an authentication token using our connected app
 router.get('/', (req, res) => {
@@ -21,6 +29,7 @@ router.get('/', (req, res) => {
 	// Define option
 	var options = {
 		'method':'GET',
+        'responseType': 'arraybuffer',
         'headers': {
             'x-tableau-auth': token
         },
@@ -30,10 +39,13 @@ router.get('/', (req, res) => {
     //  Make Login API call to Tableau for all views within a project
     axios(options)
     .then( response => {
+
+        //  Tableau returns an array buffer, need to base64 encode this to use in an image tag
+        const previewImage = btoa(response.data);
         
         //	Tableau Server responds with an string containing the image in PNG format, handle the base64 decoding client side
         res.send({
-            data: response.data
+            data: `data:image/png;base64,${previewImage}`
         });
     })
     .catch(function (error) {

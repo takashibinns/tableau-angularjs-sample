@@ -1,7 +1,33 @@
-import { Component, OnInit, Input, HostListener, Inject } from '@angular/core';
+import { Component, OnInit, Input, HostListener, Inject, Output, EventEmitter } from '@angular/core';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import axios, {AxiosRequestConfig} from 'axios';
+import { TableauDashboard } from '../common/models/tableau-dashboard';
+import SessionHelper from '../common/user-session';
 
 const bufferSize = 25;
+
+//  Define function to login via API
+let getJwt = (encryptedUserId: string):any => {
+
+  // Define option
+  const options: AxiosRequestConfig = {
+    'method': 'GET',
+    'url': `/api/jwt?encryptedUserId=${encryptedUserId}`
+  }
+
+  //	Make the API call and return the results
+  return axios(options).then(response => { 
+    if (response.data.error){
+      
+      //  Return an empty string, 
+      return ''
+    } else {
+      
+      //  Return a JWT for the connected app
+      return response.data.connectedAppToken;
+    }
+  })
+}
 @Component({
   selector: 'app-tableau-embeded-viz',
   templateUrl: './tableau-embeded-viz.component.html',
@@ -11,25 +37,42 @@ export class TableauEmbededVizComponent implements OnInit {
 
   constructor(public dialog: MatDialog) { }
 
+  @Output() hideDashboard:EventEmitter<boolean> = new EventEmitter();
+  //@Output() selectedDashboard: EventEmitter<TableauDashboard> = new EventEmitter()
+
   //  Inherit attributes from the parent component
   @Input() vizUrl = ''; 
   @Input() divId = ''; 
+  @Input() encryptedUserId = '';
   @Input() workbookName = '';
   @Input() workbookDescription = '';
   @Input() workbookOwner = '';
   @Input() workbookLastUpdated = '';
   @Input() isFavorite = false;
   @Input() toolbar = 'hidden';
+  @Input() dashboard = {} as TableauDashboard;
 
   //  Use Connected Apps for SSO to Tableau Server/Online
-  public connectedAppToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImMzOTM3YWYwLThlNTktNDNkMC04OTY1LTRkYjNmMjRjYzBkNCIsImlzcyI6ImE1NTM1ODllLTU3YzAtNDUwZS1hNjFkLTk4Nzg4OWM4NmRhNyJ9.eyJpc3MiOiJhNTUzNTg5ZS01N2MwLTQ1MGUtYTYxZC05ODc4ODljODZkYTciLCJleHAiOjE2NTA2NjAyMzEuMzU0LCJqdGkiOiI2ZjE3ODljZC1jMGFkLTQwMWYtOGFkYS1jYTlhYjNlNzc1MDEiLCJhdWQiOiJ0YWJsZWF1Iiwic3ViIjoidGJpbm5zQHRhYmxlYXUuY29tIiwic2NwIjpbInRhYmxlYXU6dmlld3M6ZW1iZWQiLCJ0YWJsZWF1Om1ldHJpY3M6ZW1iZWQiXSwiaWF0IjoxNjUwNjU5OTMxfQ.RtwsHfnj9QwMJpJqBtwgaJ5FDRYD-Gs-rr2JheZc7VY";
+  public connectedAppToken = '';
+  
   
   //  Make sure the dashboard is as wide as the user's screen, and uses a 4:3 aspect ratio
   public getScreenWidth: any;
   public getScreenHeight: any;
-  ngOnInit(): void {
+  async ngOnInit() {
     this.getScreenWidth = window.innerWidth-bufferSize;
     this.getScreenHeight = (window.innerWidth-bufferSize)*3/4;
+
+    //  Retrieve the user's session details from local storage
+    let auth = SessionHelper.load();
+
+    //  Generate a JWT for SSO
+    this.connectedAppToken = await getJwt(auth.encryptedUserId);
+
+    //  Determine the Viz URL for embedding
+    this.vizUrl = `${auth.tableauBaseUrl}/views/${this.dashboard.workbook.contentUrl}/${this.dashboard.viewUrlName}`;
+
+    console.log(this.dashboard);
   }
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -70,6 +113,10 @@ export class TableauEmbededVizComponent implements OnInit {
         }
       },
     });
+  }
+
+  closeDashboard(){
+    this.hideDashboard.emit(true)
   }
 }
 
