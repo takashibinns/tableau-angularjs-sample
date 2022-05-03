@@ -1,17 +1,8 @@
+import {Auth} from './models/authentication';
 
 const localStorageKey = 'appCredentials';
 const expiryHours = 2;
 const expiryDefault = '1/1/1900';
-
-interface Auth {
-    encryptedUserId: string,
-    tableauUserId: string,
-    apiToken: string,
-    siteId: string,
-    tableauBaseUrl: string,
-    expiry: Date,
-    expired:boolean
-}
 
 export default class SessionHelper {
 
