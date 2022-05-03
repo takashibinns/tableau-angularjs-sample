@@ -1,17 +1,25 @@
+/*  Define the card sizes   */
 .dashboard-card {
-    min-width: 300px;
-    max-width: 500px;
-  }
-
-  .content {
-    padding: 16px;
+  min-width: 300px;
+  max-width: 500px;
+  margin-bottom:1.5em;
 }
 
-.content > mat-card {
-    width: 300px;
-}
+/*  Make sure the dashboard preview images scale  */
 .tableau-preview {
-  height: 200px;
-  width: 200px;
+  height: 100%;
+  width: 100%;
   margin-left: 0;
+}
+
+/*  Align the cards evenly within each row  */
+div.dashboard-cards-container {
+  display: flex;
+  justify-content: space-between;
+}
+div.dashboard-card::before {
+  content: "";
+}
+div.dashboard-card::after {
+  content: "";
 }

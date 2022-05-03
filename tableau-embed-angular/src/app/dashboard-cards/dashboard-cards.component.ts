@@ -3,30 +3,10 @@ import { Component, OnInit, HostListener, Input, Output, EventEmitter } from '@a
 import axios, {AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
 import {TableauDashboard} from '../common/models/tableau-dashboard';
+
 //  Define the path to the loading image for dashboard previews
 const dashboardPreviewLoadingImage = '/assets/loading.gif';
-/*
-interface TableauDashboard {
-  id:string,
-  name:string,
-  preview: string,
-  contentUrl: string,
-  createdAt: Date,
-  updatedAt: Date,
-  usage: {
-    totalViewCount: number
-  },
-  owner: {
-    id:string,
-    email: string,
-    fullName:string
-  },
-  workbook: {
-    id:string,
-    name:string
-  }
-}
-*/
+
 @Component({
   selector: 'app-dashboard-cards',
   templateUrl: './dashboard-cards.component.html',
@@ -40,13 +20,8 @@ export class DashboardCardsComponent implements OnInit {
   @Input() authString = '';
   @Output() selectedDashboard: EventEmitter<TableauDashboard> = new EventEmitter()
 
-  //  Default to 3 cards per row, but this is dependant on the screen size
-  public cardsPerRow = '33%';
-  //  Cards will all have a width of 300px
-  public cardWidth = 300;
   //  List of tableau dashboards to display as cards
   public dashboards: TableauDashboard[] = [];
-  //public dashboards = []
 
   //  Method to format datetime
   public formatDatetime = (dateString:Date) => {
@@ -80,7 +55,7 @@ export class DashboardCardsComponent implements OnInit {
     }
   }
 
-  //  Method to fetch the 
+  //  Method to fetch the list of dashboards from Tableau
   private getDashboards = (apiToken:string, siteId:string) => {
 
     //  Verify we have an API token & Site ID
@@ -132,7 +107,7 @@ export class DashboardCardsComponent implements OnInit {
               myDashboards[index] = newDashboard;
   
               //  Set the preview image as the loading spinner by default
-              //dashboard.preview = dashboardPreviewLoadingImage;
+              dashboard.preview = dashboardPreviewLoadingImage;
   
               //  Trigger an async call to get the real preview image via REST API and assign it to the dashboard later
               this.getDashboardPreview(apiToken,siteId,newDashboard.workbook.id, newDashboard.id, index);
@@ -140,7 +115,6 @@ export class DashboardCardsComponent implements OnInit {
             })
           
             //  Return a list of dashboard objects
-            //return response.data.data;
             return myDashboards;
           }
         })
@@ -153,42 +127,14 @@ export class DashboardCardsComponent implements OnInit {
     }
   }
 
-  //  Method to determine how many cards to show on each row
-  private calculateCardsPerRow = (thisComponent:any) => {
-
-    //  Calculate the screen width (25px buffer)
-    let screenWidth = window.innerWidth-25;
-
-    //  Calculate how many cards to show on 1 line
-    thisComponent.cardsPerRow = Math.round( 100 / (Math.floor(screenWidth / thisComponent.cardWidth) ) ) + '%';
-    console.log(`Show ${Math.floor(screenWidth / thisComponent.cardWidth)} cards, or ${thisComponent.cardsPerRow}`);
-    return null;
-  }
-
-  //  Event handler to watch for window resize events
-  @HostListener('window:resize', ['$event'])
-  onWindowResize() {
-    this.calculateCardsPerRow(this);
-  }
-
   //  Run when the component is loaded
   async ngOnInit(): Promise<void> {
 
     //  Retrieve the user's session details from local storage
     let auth = SessionHelper.load();
-    /*
-    //  Parse the auth object
-    //let auth = JSON.parse(this.authString);
-    //  Check localstorage for un-expired credentails
-    let authString = localStorage.getItem('appCredentails')
-    let auth = JSON.parse(authString ? authString : "{}");
-    */
 
     //  Get the list of Dashboards via API
     this.dashboards = await this.getDashboards(auth.apiToken, auth.siteId);
-
-    //  Calculate how many cards to show per row
-    this.calculateCardsPerRow(this);
   }
 
   //  Click handler (user clicks on a card)

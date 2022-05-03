@@ -290,3 +290,8 @@
       visibility: hidden;
     }
   }
+
+.content {
+  max-width: 90%;
+
+}
