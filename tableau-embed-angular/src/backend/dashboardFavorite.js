@@ -39,13 +39,10 @@ router.get('/', (req, res) => {
                 viewIsFavorite = true;
             }
         })
-        console.log(viewId)
 
         //  Return the result
         res.send({
-            'data': {
-                isFavorite: viewIsFavorite
-            }
+            isFavorite: viewIsFavorite
         })
     })
     .catch( error => {
@@ -65,39 +62,47 @@ router.post('/', (req, res) => {
           siteId = req.body.siteId,
           tableauUserId = req.body.tableauUserId;
           viewId = req.body.viewId,
-          viewName = req.body.viewName;
+          viewName = req.body.viewName,
+          markFavorite = req.body.markFavorite;
 
 	//	Get the tableau server/online details
 	const tableau = tableauHelper.tableauDetails();
 
-    //	Define the login url
-    const url = `${tableauHelper.tableauRestBaseUrl(siteId)}/favorites/${tableauUserId}`;
-
-    //  API call payload
-    const payload = {
-        'favorite': {
-            'label': viewName,
-            'view': {
-                'id': viewId
+    //  Do we need to save as a favorite, or remove a favorite?
+    let options;
+    if (markFavorite) {
+        /*  Mark a view as a favorite */
+        options = {
+            'method':'PUT',
+            'headers': tableauHelper.tableauHeaders(token),
+            'url': `${tableauHelper.tableauRestBaseUrl(siteId)}/favorites/${tableauUserId}`,
+            'data': {
+                'favorite': {
+                    'label': viewName,
+                    'view': {
+                        'id': viewId
+                    }
+                }
             }
+        }
+    } else {
+        /*  Delete a view's favorite status */
+        options = {
+            'method':'DELETE',
+            'headers': tableauHelper.tableauHeaders(token),
+            'url': `${tableauHelper.tableauRestBaseUrl(siteId)}/favorites/${tableauUserId}/views/${viewId}`,
         }
     }
 
-	// Define option
-	var options = {
-		'method':'PUT',
-        'headers': tableauHelper.tableauHeaders(token),
-		'url': url,
-        'data': payload
-	}
-
-    //  Make Login API call to Tableau for all views within a project
+    //  Make Login API call to Tableau
     axios(options)
     .then( response => {
         
         //	Tableau Server responds with an string containing the image in PNG format, handle the base64 decoding client side
         res.send({
-            status: 'Complete'
+            status: 'Success',
+            isFavorite: markFavorite,
+            details: `View ID ${viewId} ${markFavorite ? 'added to' : 'removed from'} favorites list`
         });
     })
     .catch(function (error) {

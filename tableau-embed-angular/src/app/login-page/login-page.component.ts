@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import axios, { AxiosRequestConfig, AxiosResponse} from 'axios';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import axios, { AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
 
 @Component({

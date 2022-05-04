@@ -1,12 +1,11 @@
-import { CDK_CONNECTED_OVERLAY_SCROLL_STRATEGY_PROVIDER_FACTORY } from '@angular/cdk/overlay/overlay-directives';
-import { Component, OnInit, HostListener, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import axios, {AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
 import {TableauDashboard} from '../common/models/tableau-dashboard';
+import TableauHelper from '../common/tableau-helper';
 
 //  Define the path to the loading image for dashboard previews
 const dashboardPreviewLoadingImage = '/assets/loading.gif';
-
 @Component({
   selector: 'app-dashboard-cards',
   templateUrl: './dashboard-cards.component.html',
@@ -25,10 +24,10 @@ export class DashboardCardsComponent implements OnInit {
 
   //  Method to format datetime
   public formatDatetime = (dateString:Date) => {
-    //const timestamp = new Date(dateString);
-    return dateString.toDateString();
+    return TableauHelper.dateFormatter(dateString);
   }
 
+  //  Method to get the preview image of a dashboard
   private getDashboardPreview = (apiToken:string, siteId:string, workbookId:string, viewId:string, dashboardIndex:number):void => {
 
     //  Verify we have an API token, Site ID, Workbook ID, and View ID
@@ -82,6 +81,7 @@ export class DashboardCardsComponent implements OnInit {
             //  Loop through each dashboard in the response
             response.data.data.forEach( (dashboard:any, index:number) => {
 
+              //  Create a new TableauDashboard object
               let newDashboard:TableauDashboard = {
                 id: dashboard.id,
                 name: dashboard.name,
@@ -95,6 +95,7 @@ export class DashboardCardsComponent implements OnInit {
                 workbook: {
                   id: dashboard.workbook.id,
                   name: dashboard.workbook.name,
+                  description: dashboard.workbook.description,
                   contentUrl: dashboard.workbook.contentUrl
                 },
                 owner: {
@@ -104,6 +105,7 @@ export class DashboardCardsComponent implements OnInit {
                 }
               }
 
+              //  Save it to the list of dashboards
               myDashboards[index] = newDashboard;
   
               //  Set the preview image as the loading spinner by default
@@ -111,7 +113,6 @@ export class DashboardCardsComponent implements OnInit {
   
               //  Trigger an async call to get the real preview image via REST API and assign it to the dashboard later
               this.getDashboardPreview(apiToken,siteId,newDashboard.workbook.id, newDashboard.id, index);
-  
             })
           
             //  Return a list of dashboard objects
@@ -123,6 +124,7 @@ export class DashboardCardsComponent implements OnInit {
           return [];
         })
     } else {
+      console.log('No valid user session, so no dashboards to display')
       return [];
     }
   }
@@ -143,5 +145,4 @@ export class DashboardCardsComponent implements OnInit {
     this.selectedDashboard.emit(dashboard)
     //console.log(`clicked on the dashboard named ${dashboard.name}`)
   }
-
 }

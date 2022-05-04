@@ -11,13 +11,14 @@ export interface TableauDashboard {
       totalViewCount: number
     },
     owner: {
-      id:string,
+      id: string,
       email: string,
-      fullName:string
+      fullName: string
     },
     workbook: {
-      id:string,
-      name:string,
-      contentUrl:string
+      id: string,
+      name: string,
+      description: string,
+      contentUrl: string
     }
   }
