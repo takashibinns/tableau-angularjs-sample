@@ -27,20 +27,22 @@
 <!-- Main Content -->
 <div class="content" role="main">
 
-  <!--<router-outlet></router-outlet>-->
+  <router-outlet (deactivate)='onRouteChange($event)'></router-outlet>
 
   <!--  Show Login form if the user is not logged in  -->
+  <!--
   <div *ngIf="!userLoggedIn">
     <app-login-page (userLoggedIn)="loginCheck()">
     </app-login-page>
   </div>
-
+  -->
   <!--  Show the list of dashboards when the user is logged in -->
+  <!--
   <div *ngIf="userLoggedIn">
     <app-dashboard-cards *ngIf="!showSpecificDashboard" (selectedDashboard)="viewDashboard($event)"></app-dashboard-cards>
     <app-tableau-embeded-viz *ngIf="showSpecificDashboard" [dashboard]="selectedDashboard" (hideDashboard)="closeDashboard($event)"></app-tableau-embeded-viz>
   </div>
-
+  -->
   <!-- Footer -->
   <footer>
       Love Angular?&nbsp;
@@ -61,13 +63,3 @@
   </svg>
 
 </div>
-
-
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced. * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->

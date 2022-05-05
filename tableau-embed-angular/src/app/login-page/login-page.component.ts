@@ -24,8 +24,8 @@ export class LoginPageComponent implements OnInit {
     password: new FormControl('', Validators.required),
   });
 
-  //constructor(private router: Router){}
-  constructor(){}
+  constructor(private router: Router){}
+  //constructor(){}
 
   ngOnInit(): void {}
 
@@ -92,7 +92,7 @@ export class LoginPageComponent implements OnInit {
         this.userLoggedIn.emit(true)
         
         //  Redirect to the home page
-        //this.router.navigate(['/home']);
+        this.router.navigateByUrl('/home');
 
       }
 

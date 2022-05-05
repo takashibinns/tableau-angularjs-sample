@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import axios, {AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
 import {TableauDashboard} from '../common/models/tableau-dashboard';
@@ -13,7 +14,7 @@ const dashboardPreviewLoadingImage = '/assets/loading.gif';
 })
 export class DashboardCardsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router) {}
 
   //  Inherit the authentication object
   @Input() authString = '';
@@ -142,7 +143,8 @@ export class DashboardCardsComponent implements OnInit {
   //  Click handler (user clicks on a card)
   public viewDashboard = (dashboard:TableauDashboard) => {
     //  Notify parent that login was successful
-    this.selectedDashboard.emit(dashboard)
+    //this.selectedDashboard.emit(dashboard)
+    this.router.navigateByUrl(`dashboard/${dashboard.id}`)
     //console.log(`clicked on the dashboard named ${dashboard.name}`)
   }
 }

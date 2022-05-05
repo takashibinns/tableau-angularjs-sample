@@ -5,7 +5,29 @@ import { TableauEmbededVizComponent } from './tableau-embeded-viz/tableau-embede
 import { LoginPageComponent } from './login-page/login-page.component';
 import { DashboardCardsComponent } from './dashboard-cards/dashboard-cards.component';
 
+import {LoginGuard} from './login.guard';
+
 const routes: Routes = [
+  { 
+    path: 'login', 
+    component: LoginPageComponent,
+  },
+  { 
+    path: 'home', 
+    component: DashboardCardsComponent,
+    canActivate: [LoginGuard]
+  },
+  { 
+    path: 'dashboard/:id', 
+    component: TableauEmbededVizComponent,
+    canActivate: [LoginGuard]
+  },
+  { 
+    path: '', 
+    component: DashboardCardsComponent, 
+    pathMatch: 'full',
+    canActivate: [LoginGuard]
+  },
 ];
 
 @NgModule({

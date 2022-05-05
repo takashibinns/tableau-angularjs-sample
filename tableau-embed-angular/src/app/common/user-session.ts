@@ -60,4 +60,9 @@ export default class SessionHelper {
             return blankAuth;
         }
     }
+
+    //  Method for ending the user's current session
+    static end = ():void => {
+        localStorage.removeItem(localStorageKey)
+    }
 };

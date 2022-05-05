@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, HostListener, Inject, Output, EventEmitter } from '@angular/core';
 import {MatDialog, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { Router, ActivatedRoute } from '@angular/router';
 import axios, {AxiosRequestConfig} from 'axios';
 import { Auth } from '../common/models/authentication';
 import { TableauDashboard } from '../common/models/tableau-dashboard';
@@ -15,7 +16,7 @@ const bufferSize = 25;
 })
 export class TableauEmbededVizComponent implements OnInit {
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private router: Router, private activatedRoute:ActivatedRoute){}
 
   @Output() hideDashboard:EventEmitter<boolean> = new EventEmitter();
   //@Output() selectedDashboard: EventEmitter<TableauDashboard> = new EventEmitter()
@@ -30,7 +31,7 @@ export class TableauEmbededVizComponent implements OnInit {
   @Input() workbookLastUpdated = '';
   @Input() isFavorite = false;
   @Input() toolbar = 'hidden';
-  @Input() dashboard = {} as TableauDashboard;
+  //@Input() dashboard = {} as TableauDashboard;
 
   //  Dashboard properties
   public auth = {} as Auth
@@ -38,6 +39,7 @@ export class TableauEmbededVizComponent implements OnInit {
   public VizIndex = 'Tableau-Viz-' + this.dashboardIndex;
   public getScreenWidth: any;
   public getScreenHeight: any;
+  public dashboard = {} as TableauDashboard;
 
   //  Method to return a JWT for Tableau SSO
   private getJwt = (encryptedUserId: string):any => {
@@ -62,21 +64,66 @@ export class TableauEmbededVizComponent implements OnInit {
     })
   }
 
+  //  Method to get info about a specific dashboard
+  private getDashboard = (id: string) => {
+
+    // Do we have an Id?
+    if (id.length<=0 && this.auth.apiToken.length>0) {
+
+      //  Return an emtpy dashboard if no ID supplied
+      return TableauHelper.createDashboard(null);
+    } else {
+
+      //  Fetch the dashboard details via API call
+      const options: AxiosRequestConfig = {
+        'method': 'GET',
+        'url': `/api/dashboards/${id}?apiToken=${this.auth.apiToken}&siteId=${this.auth.siteId}`
+      }
+    
+      //	Make the API call and return the results
+      return axios(options).then(response => { 
+        if (response.data.error){
+          
+          //  Return an empty string, 
+          return TableauHelper.createDashboard(null);
+        } else {
+          
+          //  Return a JWT for the connected app
+          return TableauHelper.createDashboard(response.data.view);
+        }
+      })
+    }
+  }
+
   //  Run when the component is first loaded
   async ngOnInit() {
+
+    //  Retrieve the user's session details from local storage
+    this.auth = SessionHelper.load();
+
+    //  Fetch the dashboard's details from the ID in the URL
+    this.activatedRoute.params.subscribe(async params => {
+
+      //  Save a reference to the dashboard as a whole
+      this.dashboard = await this.getDashboard(params['id']);
+
+      //  Make sure we've got a valid dashboard id
+      if (this.dashboard.id) {
+
+        //  Determine the URL for embedding this dashboard
+        this.vizUrl = `${this.auth.tableauBaseUrl}/views/${this.dashboard.workbook.contentUrl}/${this.dashboard.viewUrlName}`;
+
+        //  Figure out if this view is in the user's favorites list
+        this.getFavorite(this.dashboard.id)
+      }
+    });
 
     //  Calculate the available screen size
     this.getScreenWidth = window.innerWidth-bufferSize;
     this.getScreenHeight = (window.innerWidth-bufferSize)*3/4;
 
-    //  Retrieve the user's session details from local storage
-    this.auth = SessionHelper.load();
-
     //  Generate a JWT for SSO
     this.connectedAppToken = await this.getJwt(this.auth.encryptedUserId);
-
-    //  Determine the Viz URL for embedding
-    this.vizUrl = `${this.auth.tableauBaseUrl}/views/${this.dashboard.workbook.contentUrl}/${this.dashboard.viewUrlName}`;
   }
 
   //  Handle changes to the window's size
@@ -99,9 +146,6 @@ export class TableauEmbededVizComponent implements OnInit {
 
   //  Run when this component is first loaded
   ngAfterViewInit() {
-
-    //  Figure out if this view is in the user's favorites list
-    this.getFavorite(this.dashboard.id)
 
     //  Define a function that can be run, on
     let viz = document.getElementById(this.VizIndex);
@@ -193,7 +237,8 @@ export class TableauEmbededVizComponent implements OnInit {
 
   //  Close out of this page
   public closeDashboard = () => {
-    this.hideDashboard.emit(true)
+    //this.hideDashboard.emit(true)
+    this.router.navigateByUrl('home');
   }
 }
 
