@@ -26,8 +26,6 @@ export class LoginGuard implements CanActivate {
 
         //  User is not logged in, redirect to the login page
         return this.router.parseUrl('/login');
-        //this.router.navigateByUrl('login')
-        //return false;
       }
   }
 }

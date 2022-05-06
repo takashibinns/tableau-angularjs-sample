@@ -31,7 +31,6 @@ export default class SessionHelper {
     static save = (auth:Auth):void =>{
         //  Save to local storage
         localStorage.setItem(localStorageKey, JSON.stringify(auth))
-        console.log('saving user session')
     }
 
     //  Method for saving the user's current session details
@@ -44,7 +43,6 @@ export default class SessionHelper {
         const expiry = auth.expiry ? new Date(auth.expiry) : new Date(expiryDefault);
         if (expiry> new Date()) {
             //  Session data still valid, return Auth
-            console.log('loading user session')
             return auth;
         } else {
             //  Session data expired, return blank Auth object

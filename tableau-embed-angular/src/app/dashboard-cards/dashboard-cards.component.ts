@@ -1,12 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import axios, {AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
 import {TableauDashboard} from '../common/models/tableau-dashboard';
 import TableauHelper from '../common/tableau-helper';
 
-//  Define the path to the loading image for dashboard previews
-const dashboardPreviewLoadingImage = '/assets/loading.gif';
 @Component({
   selector: 'app-dashboard-cards',
   templateUrl: './dashboard-cards.component.html',
@@ -15,10 +13,6 @@ const dashboardPreviewLoadingImage = '/assets/loading.gif';
 export class DashboardCardsComponent implements OnInit {
 
   constructor(private router: Router) {}
-
-  //  Inherit the authentication object
-  @Input() authString = '';
-  @Output() selectedDashboard: EventEmitter<TableauDashboard> = new EventEmitter()
 
   //  List of tableau dashboards to display as cards
   public dashboards: TableauDashboard[] = [];
@@ -44,10 +38,8 @@ export class DashboardCardsComponent implements OnInit {
       //  Make the API call
       axios(options)
         .then(response => { 
-  
           //  Update the dashboard object
           this.dashboards[dashboardIndex].preview = response.data.data;
-          console.log(`Image fetched for dashboard ${dashboardIndex}`);
         })
         .catch(error => {
           console.log(error.response)
@@ -71,8 +63,7 @@ export class DashboardCardsComponent implements OnInit {
       //	Make the API call and return the results
       return axios(options)
         .then(response => { 
-          if (response.data.error){
-            
+          if (response.data.error){           
             //  Return an empty array 
             return [];
           } else {
@@ -82,35 +73,11 @@ export class DashboardCardsComponent implements OnInit {
             //  Loop through each dashboard in the response
             response.data.data.forEach( (dashboard:any, index:number) => {
 
-              //  Create a new TableauDashboard object
-              let newDashboard:TableauDashboard = {
-                id: dashboard.id,
-                name: dashboard.name,
-                viewUrlName: dashboard.viewUrlName,
-                preview: dashboardPreviewLoadingImage,
-                createdAt: new Date(dashboard.createdAt),
-                updatedAt: new Date(dashboard.updatedAt),
-                usage: {
-                  totalViewCount: parseInt(dashboard.usage.totalViewCount)
-                },
-                workbook: {
-                  id: dashboard.workbook.id,
-                  name: dashboard.workbook.name,
-                  description: dashboard.workbook.description,
-                  contentUrl: dashboard.workbook.contentUrl
-                },
-                owner: {
-                  id: dashboard.owner.id,
-                  email: dashboard.owner.email,
-                  fullName: dashboard.owner.fullName
-                }
-              }
+              //  Use the API call's response data to create a TableauDashboard object
+              let newDashboard = TableauHelper.createDashboard(dashboard);
 
               //  Save it to the list of dashboards
               myDashboards[index] = newDashboard;
-  
-              //  Set the preview image as the loading spinner by default
-              dashboard.preview = dashboardPreviewLoadingImage;
   
               //  Trigger an async call to get the real preview image via REST API and assign it to the dashboard later
               this.getDashboardPreview(apiToken,siteId,newDashboard.workbook.id, newDashboard.id, index);
@@ -142,9 +109,6 @@ export class DashboardCardsComponent implements OnInit {
 
   //  Click handler (user clicks on a card)
   public viewDashboard = (dashboard:TableauDashboard) => {
-    //  Notify parent that login was successful
-    //this.selectedDashboard.emit(dashboard)
-    this.router.navigateByUrl(`dashboard/${dashboard.id}`)
-    //console.log(`clicked on the dashboard named ${dashboard.name}`)
+    this.router.navigateByUrl(`dashboard/${dashboard.id}`) 
   }
 }

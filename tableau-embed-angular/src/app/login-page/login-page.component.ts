@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import axios, { AxiosRequestConfig} from 'axios';
 import SessionHelper from '../common/user-session';
@@ -11,10 +11,6 @@ import SessionHelper from '../common/user-session';
 })
 export class LoginPageComponent implements OnInit {
   
-  //  Define inputs/outputs for this component
-  @Input() authStorageKey = 'appCredentails';
-  @Output() userLoggedIn: EventEmitter<boolean> = new EventEmitter()
-
   //  Public property for error messages
   public error = ''
   
@@ -25,7 +21,6 @@ export class LoginPageComponent implements OnInit {
   });
 
   constructor(private router: Router){}
-  //constructor(){}
 
   ngOnInit(): void {}
 
@@ -49,21 +44,15 @@ export class LoginPageComponent implements OnInit {
         //  Return the error code, to propegate to the user
         return response.data.error;
       } else {
-        
-        //  Include an expiration date, so we can ask for new credentials if necessary
-        let results = response.data;
-        let expiryDate = new Date();
-        expiryDate.setHours( expiryDate.getHours() + 2)
-        results['expiry'] = expiryDate
-        
-        //  Return the object
-        return results;
+      
+        //  Return the auth object
+        return response.data;
       }
     })
   }
 
   //  Handler for when the user submits the login form
-  async submit() { 
+  public async submit() { 
     
     //  Did the user actually put anything in the input boxes?
     if (this.form.valid) {
@@ -87,13 +76,9 @@ export class LoginPageComponent implements OnInit {
 
         //  Save it to local storage, so we don't have to re-login after each refresh
         SessionHelper.save(auth);
-
-        //  Notify parent that login was successful
-        this.userLoggedIn.emit(true)
         
         //  Redirect to the home page
         this.router.navigateByUrl('/home');
-
       }
 
     } else {

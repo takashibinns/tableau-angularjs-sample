@@ -1,32 +1,20 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { TableauDashboard } from './common/models/tableau-dashboard';
+import { Router, NavigationEnd } from '@angular/router';
 import SessionHelper from './common/user-session';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent {
 
   constructor(private router: Router){}
 
-  
-  
   //  Define public properties
-  title = 'tableau-embed-angular';
   public userLoggedIn = false;
-  public authStorageKey = 'appCredentails';
-  public authCredentials = '';
-  public encryptedUserId = '';
-  public currentDashboardId = '';
-  public showSpecificDashboard = false;
-  public selectedDashboard = {} as TableauDashboard;
 
-  //  Event handler for after a user logs in via the Login component
-  private loginCheck() {
-
+  //  Check to see if the user has a valid session, if so we need to display the logout button in the toolbar
+  private canShowLogoutButton() {
     let auth = SessionHelper.load();
     if (auth.expired){
       this.userLoggedIn=false;
@@ -35,16 +23,25 @@ export class AppComponent {
     }
   }
 
-  //  Check local storage for existing auth credentials
+  //  Runs when the component is first loaded
   ngOnInit(){
-    //  Make sure the user is logged in
-    this.loginCheck()
+    this.canShowLogoutButton()
+
+    //  Always scroll to the top of the page, when changing the route
+    this.router.events.subscribe((event) => {
+      if (!(event instanceof NavigationEnd)) {
+          return;
+      }
+      window.scrollTo(0, 0)
+  });
   }
 
+  //  Runs when the URL changes
   public onRouteChange = (event:any) =>{
-    this.loginCheck()
+    this.canShowLogoutButton()
   }
 
+  //  Method to log out the current user and invalidate their session
   public logout() {
 
     //  Clear session info from local storage
@@ -56,23 +53,4 @@ export class AppComponent {
     //  Redirect user to login page
     this.router.navigateByUrl('/login');
   }
-
-  /*
-  public viewDashboard(dashboard:TableauDashboard) {
-    //  Set the selected dashboard object
-    this.selectedDashboard = dashboard;
-    //  Update the flag, so that the embedded view is shown
-    this.showSpecificDashboard = true;
-  }
-  */
-
-  /*
-  public closeDashboard(hideDashboard:boolean){
-    //  Don't show the embedded dashboard anymore
-    this.showSpecificDashboard = !hideDashboard;
-  }
-  */
-
-  
-
 }

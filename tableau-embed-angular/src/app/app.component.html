@@ -19,30 +19,19 @@
         <path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/>
       </svg>
     </a>
+    
+    <!--  Button to allow the current user to log out -->
     <button *ngIf="userLoggedIn" mat-icon-button class="example-icon" aria-label="Logout" (click)="logout()">
       <mat-icon>input</mat-icon>
-  </button>
+    </button>
 </div>
 
 <!-- Main Content -->
 <div class="content" role="main">
 
+  <!-- Let the router determine the main content to display -->
   <router-outlet (deactivate)='onRouteChange($event)'></router-outlet>
 
-  <!--  Show Login form if the user is not logged in  -->
-  <!--
-  <div *ngIf="!userLoggedIn">
-    <app-login-page (userLoggedIn)="loginCheck()">
-    </app-login-page>
-  </div>
-  -->
-  <!--  Show the list of dashboards when the user is logged in -->
-  <!--
-  <div *ngIf="userLoggedIn">
-    <app-dashboard-cards *ngIf="!showSpecificDashboard" (selectedDashboard)="viewDashboard($event)"></app-dashboard-cards>
-    <app-tableau-embeded-viz *ngIf="showSpecificDashboard" [dashboard]="selectedDashboard" (hideDashboard)="closeDashboard($event)"></app-tableau-embeded-viz>
-  </div>
-  -->
   <!-- Footer -->
   <footer>
       Love Angular?&nbsp;
@@ -57,6 +46,7 @@
       </a>
   </footer>
 
+  <!-- Background -->
   <svg id="clouds" xmlns="http://www.w3.org/2000/svg" width="2611.084" height="485.677" viewBox="0 0 2611.084 485.677">
     <title>Gray Clouds Background</title>
     <path id="Path_39" data-name="Path 39" d="M2379.709,863.793c10-93-77-171-168-149-52-114-225-105-264,15-75,3-140,59-152,133-30,2.83-66.725,9.829-93.5,26.25-26.771-16.421-63.5-23.42-93.5-26.25-12-74-77-130-152-133-39-120-212-129-264-15-54.084-13.075-106.753,9.173-138.488,48.9-31.734-39.726-84.4-61.974-138.487-48.9-52-114-225-105-264,15a162.027,162.027,0,0,0-103.147,43.044c-30.633-45.365-87.1-72.091-145.206-58.044-52-114-225-105-264,15-75,3-140,59-152,133-53,5-127,23-130,83-2,42,35,72,70,86,49,20,106,18,157,5a165.625,165.625,0,0,0,120,0c47,94,178,113,251,33,61.112,8.015,113.854-5.72,150.492-29.764a165.62,165.62,0,0,0,110.861-3.236c47,94,178,113,251,33,31.385,4.116,60.563,2.495,86.487-3.311,25.924,5.806,55.1,7.427,86.488,3.311,73,80,204,61,251-33a165.625,165.625,0,0,0,120,0c51,13,108,15,157-5a147.188,147.188,0,0,0,33.5-18.694,147.217,147.217,0,0,0,33.5,18.694c49,20,106,18,157,5a165.625,165.625,0,0,0,120,0c47,94,178,113,251,33C2446.709,1093.793,2554.709,922.793,2379.709,863.793Z" transform="translate(142.69 -634.312)" fill="#eee"/>

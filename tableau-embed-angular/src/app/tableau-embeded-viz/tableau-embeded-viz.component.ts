@@ -18,28 +18,22 @@ export class TableauEmbededVizComponent implements OnInit {
 
   constructor(public dialog: MatDialog, private router: Router, private activatedRoute:ActivatedRoute){}
 
-  @Output() hideDashboard:EventEmitter<boolean> = new EventEmitter();
-  //@Output() selectedDashboard: EventEmitter<TableauDashboard> = new EventEmitter()
-
   //  Inherit attributes from the parent component
-  @Input() vizUrl = ''; 
   @Input() dashboardIndex = 0; 
-  @Input() encryptedUserId = '';
-  @Input() workbookName = '';
-  @Input() workbookDescription = '';
-  @Input() workbookOwner = '';
-  @Input() workbookLastUpdated = '';
-  @Input() isFavorite = false;
   @Input() toolbar = 'hidden';
-  //@Input() dashboard = {} as TableauDashboard;
 
   //  Dashboard properties
   public auth = {} as Auth
   public connectedAppToken = '';
   public VizIndex = 'Tableau-Viz-' + this.dashboardIndex;
+  public vizUrl = '';
   public getScreenWidth: any;
   public getScreenHeight: any;
   public dashboard = {} as TableauDashboard;
+  public isFavorite = false;
+  public dashboardName = '';
+  public viewIsFavorite = "favorite_border"
+  public thisViz: any;
 
   //  Method to return a JWT for Tableau SSO
   private getJwt = (encryptedUserId: string):any => {
@@ -133,18 +127,7 @@ export class TableauEmbededVizComponent implements OnInit {
     this.getScreenHeight = (window.innerWidth-bufferSize)*3/4;
   }
 
-  //  Get information about the dashboard, using the Embed API
-  public dashboardName = '';
-  public viewIsFavorite = "favorite_border"
-  public thisViz: any;
-
-  //  Method to update the icon, after a status change
-  public setFavoriteIcon = (isFavorite:boolean) => {
-    this.isFavorite = isFavorite;
-    this.viewIsFavorite = isFavorite ? "favorite" : "favorite_border"
-  }
-
-  //  Run when this component is first loaded
+  //  Run after the component has been rendered
   ngAfterViewInit() {
 
     //  Define a function that can be run, on
@@ -160,8 +143,14 @@ export class TableauEmbededVizComponent implements OnInit {
     }
   }
 
+  //  Method to update the icon, after a status change
+  private setFavoriteIcon = (isFavorite:boolean) => {
+    this.isFavorite = isFavorite;
+    this.viewIsFavorite = isFavorite ? "favorite" : "favorite_border"
+  }
+
   //  Method to determine if the current viz is a favorite
-  public getFavorite = (vizId:string) => {
+  private getFavorite = (vizId:string) => {
     let thisComponent = this;
 
     // Define options
@@ -215,7 +204,6 @@ export class TableauEmbededVizComponent implements OnInit {
 
   //  Method to reset the dashboard filters
   public resetFilters = () => {
-    console.log(this)
     //  Use the Embeding API to revert all filter changes
     this.thisViz.revertAllAsync()
   }
@@ -237,7 +225,6 @@ export class TableauEmbededVizComponent implements OnInit {
 
   //  Close out of this page
   public closeDashboard = () => {
-    //this.hideDashboard.emit(true)
     this.router.navigateByUrl('home');
   }
 }
