@@ -40,8 +40,6 @@ router.post('/', (req, res) => {
     axios(options)
     .then( response => {
 
-        console.log(response.data);
-
         console.log(`Successfully authenticated user ${username}`)
 
         //	Get the api token and site id
@@ -62,7 +60,7 @@ router.post('/', (req, res) => {
         console.log(`Error: Tableau threw an error while trying to authenticate user ${username}`)
         console.log(error.response);
         res.send({
-            'error': error.response.data
+            'error': error.response
         })
     })
 })
