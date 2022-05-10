@@ -4,13 +4,17 @@ This project shows how to build a web app that embeds dashboards from Tableau Se
 # Project Setup
 ```
 # Clone the repo
-git clone https://github.com/takashibinns/tableau-angularjs-sample.git
+git clone --branch dev https://github.com/takashibinns/tableau-angularjs-sample.git
+
 # Change into the application code directory
-cd tableau-embed-angular
+cd tableau-angularjs-sample/tableau-embed-angular
+
 # Install the Angular CLI
 npm install -g @angular/cli@latest
+
 # Install npm-run-all which allows you to run multiple commands at the same time
 npm install npm-run-all -g --save-dev
+
 # Install the application dependencies
 npm install
 ```
@@ -45,6 +49,7 @@ If you are looking to deploy this application in production, the build process i
 ```
 # Build the Angular App (output to dist folder)
 ng build
+
 # Run the Express node app
 node src/backend/server.js
 ```
@@ -55,6 +60,7 @@ What if you want to deploy into a docker container? This project already contain
 ```
 # Build the docker image
 docker build . -t tableau-embed-api-angular
+
 # Start the image
 run --env-file .env -p 8080:8080 tableau-embed-api-angular
 ```
