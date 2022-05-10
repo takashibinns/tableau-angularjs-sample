@@ -58,9 +58,9 @@ router.post('/', (req, res) => {
     })
     .catch(function (error) {
         console.log(`Error: Tableau threw an error while trying to authenticate user ${username}`)
-        console.log(error.response);
+        let errorData = tableauHelper.getProp(error.response.data.error, {'detail': `Error logging in as user ${username}`})
         res.send({
-            'error': error.response
+            'error': errorData
         })
     })
 })

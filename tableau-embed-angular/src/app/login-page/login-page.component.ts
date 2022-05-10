@@ -39,15 +39,7 @@ export class LoginPageComponent implements OnInit {
   
     //	Make the API call and return the results
     return axios(options).then(response => { 
-      if (response.data.error){
-        
-        //  Return the error code, to propegate to the user
-        return response.data.error;
-      } else {
-      
-        //  Return the auth object
-        return response.data;
-      }
+      return response.data;
     })
   }
 

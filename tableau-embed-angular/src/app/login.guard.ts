@@ -17,7 +17,7 @@ export class LoginGuard implements CanActivate {
       const auth = SessionHelper.load();
 
       //  Does the user have a valid session?
-      const isLoggedIn = (auth.tableauUserId.length > 0);
+      const isLoggedIn = SessionHelper.authIsValid(auth);
       if (isLoggedIn){
 
         //  User is logged in, so it's ok to display the content

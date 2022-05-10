@@ -63,4 +63,25 @@ export default class SessionHelper {
     static end = ():void => {
         localStorage.removeItem(localStorageKey)
     }
+
+    //  Method to verify if Auth is valid
+    static authIsValid = (auth:Auth):boolean => {
+
+        //  Is there a valid user id?
+        if (auth && auth.tableauUserId && auth.tableauUserId.length>0) {
+            //  Yes, but has the session token expired?
+            const expiry = new Date(auth.expiry),
+                now = new Date();
+            if (expiry >= now){
+                //  Yes, session is valid
+                return true;
+            } else {
+                //  No, return false
+                return false;
+            }
+        } else {
+            //  No, return false
+            return false;
+        }
+    }
 };
