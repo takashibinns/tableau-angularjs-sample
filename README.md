@@ -62,5 +62,5 @@ What if you want to deploy into a docker container? This project already contain
 docker build . -t tableau-embed-api-angular
 
 # Start the image
-run --env-file .env -p 8080:8080 tableau-embed-api-angular
+docker run --env-file .env -p 8080:8080 tableau-embed-api-angular
 ```
