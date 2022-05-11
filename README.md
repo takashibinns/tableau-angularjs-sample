@@ -18,7 +18,7 @@ npm install npm-run-all -g --save-dev
 # Install the application dependencies
 npm install
 ```
-This web app also requires some configuration via environment variables.  Create a new file named **.env** within the tableau-embed-api directory, and make sure it looks like this:
+This web app also requires some configuration via environment variables.  Create a new file named **.env** within the _tableau-embed-angular_ directory, and make sure it looks like this:
 ```
 PORT=8080
 TABLEAU_URL=<url-for-your-tableau-server-or-tableau-online>
@@ -45,7 +45,7 @@ npm-run-all -l -p dev-angular dev-express
 You should be able to access the running application at http://localhost:4200.  The back end is running on port 8080, but we use a proxy config to ensure everything is accessible through the same URL & port.
 
 ## Production
-If you are looking to deploy this application in production, the build process is slightly different.  First we build the Angular app using ng build, and then we can host the static files using Node/Express
+If you are looking to deploy this application in production, the build process is slightly different.  First we build the Angular app using _ng build_, and then we can host the static files using Node/Express
 ```
 # Build the Angular App (output to dist folder)
 ng build
