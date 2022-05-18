@@ -1,5 +1,5 @@
 <div class="tableau-wrapper">
-    <p>
+    <div class="tableau-toolbar">
         <mat-toolbar>
             <img class="tableau-icon" src="./../../assets/tableau-icon.png" />
             <span>{{dashboardName}}</span>
@@ -10,9 +10,9 @@
             <button mat-icon-button class="example-icon" aria-label="Reset the dashboard" (click)="resetFilters()">
                 <mat-icon>undo</mat-icon>
             </button>
-            <button mat-icon-button class="example-icon" aria-label="Download PDF" (click)="downloadPdf()">
-                <mat-icon>cloud_download</mat-icon>
-            </button>
+           <button mat-icon-button class="example-icon" aria-label="Download PDF" (click)="downloadPdf()">
+               <mat-icon>cloud_download</mat-icon>
+           </button>
             <button mat-icon-button class="example-icon" aria-label="Information about the dashboard" (click)="openDialog()">
                 <mat-icon>info</mat-icon>
             </button>
@@ -20,8 +20,8 @@
                 <mat-icon>cancel</mat-icon>
             </button>
         </mat-toolbar>
-    </p>
+    </div>
     <div class="tableau-viz-container">
-        <tableau-viz [id]="VizIndex" [src]="vizUrl" width="{{ getScreenWidth}}" height="{{ getScreenHeight}}" toolbar="{{toolbar}}" token="{{connectedAppToken}}"></tableau-viz>
+        <tableau-viz [id]="VizIndex" [src]="vizUrl" width="{{getScreenWidth}}" height="{{getScreenHeight}}" toolbar="{{toolbar}}"></tableau-viz>
     </div>
 </div>

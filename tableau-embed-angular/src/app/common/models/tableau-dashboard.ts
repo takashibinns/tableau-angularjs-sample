@@ -1,5 +1,4 @@
 /*  Tableau Dashboard object, as returned by REST API   */
-
 export interface TableauDashboard {
     id:string,
     name:string,
@@ -7,6 +6,7 @@ export interface TableauDashboard {
     viewUrlName: string,
     createdAt: Date,
     updatedAt: Date,
+    isFavorite: boolean,
     usage: {
       totalViewCount: number
     },
