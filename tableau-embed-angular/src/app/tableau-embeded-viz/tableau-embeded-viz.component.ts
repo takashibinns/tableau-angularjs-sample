@@ -208,6 +208,11 @@ export class TableauEmbededVizComponent implements OnInit {
     this.thisViz.revertAllAsync()
   }
 
+  //  Method to download the dashboard as a PDF
+  public downloadPdf = () => {
+    // Business logic goes here
+  }
+
   //  Open a modal window with more details of the workbook
   public openDialog = () => {
     this.dialog.open(TableauEmbededVizComponentDialog, {
