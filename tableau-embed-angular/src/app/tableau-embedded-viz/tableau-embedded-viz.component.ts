@@ -2,6 +2,11 @@ import { Component, OnInit, Input, HostListener } from '@angular/core';
 import { Inject } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TableauDashboard } from '../common/models/tableau-dashboard';
+import { Router, ActivatedRoute } from '@angular/router';
+import axios, {AxiosRequestConfig} from 'axios';
+import { Auth } from '../common/models/authentication';
+import SessionHelper from '../common/user-session';
+import TableauHelper from '../common/tableau-helper';
 
 @Component({
   selector: 'app-tableau-embedded-viz',
@@ -10,7 +15,7 @@ import { TableauDashboard } from '../common/models/tableau-dashboard';
 })
 export class TableauEmbeddedVizComponent implements OnInit {
 
-  constructor(public dialog: MatDialog){}
+  constructor(public dialog: MatDialog, private router: Router, private activatedRoute:ActivatedRoute){}
 
   //  Inherit attributes from the parent component
   @Input() dashboardIndex = 0; 
@@ -23,6 +28,9 @@ export class TableauEmbeddedVizComponent implements OnInit {
   public dashboardName = '';
   public viewIsFavorite = "favorite_border"
   public thisViz: any;
+  public auth = {} as Auth
+  public dashboard = {} as TableauDashboard;
+  public connectedAppToken = '';
 
   //  Handle dashboard resizing
   public getScreenWidth: any;
@@ -37,9 +45,34 @@ export class TableauEmbeddedVizComponent implements OnInit {
     this.calculateDashboardSize();
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+
     this.calculateDashboardSize();
+
+    //  Retrieve the user's session details from local storage
+    this.auth = SessionHelper.load();
+
+    //  Fetch the dashboard's details from the ID in the URL
+    this.activatedRoute.params.subscribe(async params => {
+
+      //  Save a reference to the dashboard as a whole
+      this.dashboard = await this.getDashboard(params['id']);
+
+      //  Make sure we've got a valid dashboard id
+      if (this.dashboard.id) {
+
+        //  Determine the URL for embedding this dashboard
+        this.vizUrl = `${this.auth.tableauBaseUrl}/views/${this.dashboard.workbook.contentUrl}/${this.dashboard.viewUrlName}`;
+
+        //  Figure out if this view is in the user's favorites list
+        this.getFavorite(this.dashboard.id)
+      }
+    });
+
+    //  Generate a JWT for SSO
+    this.connectedAppToken = await this.getJwt(this.auth.encryptedUserId);
   }
+
   //  Run after the component has been rendered
   ngAfterViewInit() {
 
@@ -54,6 +87,60 @@ export class TableauEmbeddedVizComponent implements OnInit {
         this.dashboardName = this.thisViz.workbook.activeSheet.name;
       });
     }
+  }
+
+  //  Method to get info about a specific dashboard
+  private getDashboard = (id: string) => {
+
+    // Do we have an Id?
+    if (id.length<=0 && this.auth.apiToken.length>0) {
+
+      //  Return an emtpy dashboard if no ID supplied
+      return TableauHelper.createDashboard(null);
+    } else {
+
+      //  Fetch the dashboard details via API call
+      const options: AxiosRequestConfig = {
+        'method': 'GET',
+        'url': `/api/dashboards/${id}?apiToken=${this.auth.apiToken}&siteId=${this.auth.siteId}`
+      }
+    
+      //    Make the API call and return the results
+      return axios(options).then(response => { 
+        if (response.data.error){
+          
+          //  Return an empty string, 
+          return TableauHelper.createDashboard(null);
+        } else {
+          
+          //  Return a JWT for the connected app
+          return TableauHelper.createDashboard(response.data.view);
+        }
+      })
+    }
+  }
+
+  //  Method to return a JWT for Tableau SSO
+  private getJwt = (encryptedUserId: string):any => {
+
+    // Define option
+    const options: AxiosRequestConfig = {
+      'method': 'GET',
+      'url': `/api/jwt?encryptedUserId=${encryptedUserId}`
+    }
+  
+    //    Make the API call and return the results
+    return axios(options).then(response => { 
+      if (response.data.error){
+        
+        //  Return an empty string, 
+        return ''
+      } else {
+        
+        //  Return a JWT for the connected app
+        return response.data.connectedAppToken;
+      }
+    })
   }
 
   //  Method to update the icon, after a status change
@@ -84,33 +171,19 @@ export class TableauEmbeddedVizComponent implements OnInit {
   }
   
   //  Open a modal window with more details of the workbook
-  openDialog() {
-    //  Create a placeholder dashboard object
-    const dash = {
-      updatedAt: new Date(),
-      workbook : {
-        id: '',
-        contentUrl: '',
-        name: 'Some Workbook',
-        description: 'some description'
-      },
-      owner: {
-        id: '',
-        email: '',
-        fullName: 'Me'
-      }
-    } as TableauDashboard;
-    //  Open the popup
+  public openDialog() {
     this.dialog.open(TableauEmbeddedVizComponentDialog, {
       minWidth: 350,
-      data: dash
+      data: this.dashboard
     });
   }
 
   //  Close out of this page
   public closeDashboard = () => {
     //  Business Logic goes here
+    this.router.navigateByUrl('home');
   }
+  
 
 }
 
@@ -121,4 +194,9 @@ export class TableauEmbeddedVizComponent implements OnInit {
 })
 export class TableauEmbeddedVizComponentDialog {
   constructor(@Inject(MAT_DIALOG_DATA) public data: TableauDashboard) {}
+
+  //  Format dates, using TableauHelper
+  public dateFormatter = (myDate:Date) => {
+    return TableauHelper.dateFormatter(myDate);
+  }
 }

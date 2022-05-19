@@ -15,12 +15,17 @@ import { AppComponent } from './app.component';
 import { TableauEmbeddedVizComponent } from './tableau-embedded-viz/tableau-embedded-viz.component';
 import { TableauEmbeddedVizComponentDialog } from './tableau-embedded-viz/tableau-embedded-viz.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { DashboardCardsComponent } from './dashboard-cards/dashboard-cards.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     TableauEmbeddedVizComponent,
-    TableauEmbeddedVizComponentDialog
+    TableauEmbeddedVizComponentDialog,
+    LoginPageComponent,
+    DashboardCardsComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +40,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     MatProgressSpinnerModule,
     MatIconModule,
     MatDialogModule,
-    MatGridListModule
+    MatGridListModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent],

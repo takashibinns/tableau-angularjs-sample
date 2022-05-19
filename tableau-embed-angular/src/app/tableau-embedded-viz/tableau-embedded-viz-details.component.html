@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{data.workbook.name}}</h2>
 <mat-dialog-content class="mat-typography">
-  <p>Created by {{data.owner.fullName}} ({{data.updatedAt}}) </p>
+  <p>Created by {{data.owner.fullName}} ({{dateFormatter(data.updatedAt)}}) </p>
   <h3 style="text-decoration: underline;">Description</h3>
   <p>{{data.workbook.description}}</p>
 </mat-dialog-content>
