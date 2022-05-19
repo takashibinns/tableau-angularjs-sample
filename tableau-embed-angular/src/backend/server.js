@@ -30,8 +30,12 @@ const routeJwt = require('./jwt');
 app.use('/api/jwt', routeJwt);
 const routeDashboards = require('./dashboards');
 app.use('/api/dashboards', routeDashboards);
-
-
+const routeDashboardPreview = require('./dashboardPreview');
+app.use('/api/dashboardPreview', routeDashboardPreview);
+const routeDashboardFavorite= require('./dashboardFavorite');
+app.use('/api/dashboardFavorite', routeDashboardFavorite);
+const routeDashboardExport= require('./dashboardExport');
+app.use('/api/dashboardExport', routeDashboardExport);
 
 /***********************************************/
 /*    Frontend: Angular App                    */

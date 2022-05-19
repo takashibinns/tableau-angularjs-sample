@@ -37,9 +37,9 @@ export class DashboardCardsComponent implements OnInit {
       // Define option
       const options: AxiosRequestConfig = {
         'method': 'GET',
-        'url': `/api/dashboards?apiToken=${auth.apiToken}&siteId=${auth.siteId}`
+        'url': `/api/dashboards?apiToken=${auth.apiToken}&siteId=${auth.siteId}&tableauUserId=${auth.tableauUserId}`
       }
-  
+      
       //    Make the API call and return the results
       return axios(options)
         .then(response => { 
@@ -56,6 +56,9 @@ export class DashboardCardsComponent implements OnInit {
               //  Use the API call's response data to create a TableauDashboard object
               let newDashboard = TableauHelper.createDashboard(dashboard);
 
+              //  Make API call to fetch the dashboard's preview image
+              this.getDashboardPreview(auth, newDashboard.workbook.id, newDashboard.id, index);
+
               //  Save it to the list of dashboards
               myDashboards[index] = newDashboard;
             })
@@ -71,6 +74,31 @@ export class DashboardCardsComponent implements OnInit {
     } else {
       console.log('No valid user session, so no dashboards to display')
       return [];
+    }
+  }
+  
+  //  Method to get the preview image of a dashboard
+  private getDashboardPreview = (auth:Auth, workbookId:string, viewId:string, dashboardIndex:number):void => {
+
+    //  Verify we have an API token, Site ID, Workbook ID, and View ID
+    const authValid = SessionHelper.authIsValid(auth) && workbookId && workbookId.length>0 && viewId && viewId.length>0;
+    if (authValid){
+  
+      // Define options for API call
+      const options: AxiosRequestConfig = {
+        'method': 'GET',
+        'url': `/api/dashboardPreview?apiToken=${auth.apiToken}&siteId=${auth.siteId}&workbookId=${workbookId}&viewId=${viewId}`
+      }
+  
+      //  Make the API call
+      axios(options)
+        .then(response => { 
+          //  Update the dashboard object
+          this.dashboards[dashboardIndex].preview = response.data.data;
+        })
+        .catch(error => {
+          console.log(error.response)
+        })
     }
   }
 

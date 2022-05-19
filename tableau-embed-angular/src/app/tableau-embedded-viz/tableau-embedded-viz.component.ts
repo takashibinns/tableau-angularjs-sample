@@ -151,12 +151,55 @@ export class TableauEmbeddedVizComponent implements OnInit {
 
   //  Method to determine if the current viz is a favorite
   private getFavorite = (vizId:string) => {
-    //  Business logic goes here
+    let thisComponent = this;
+
+    // Define options
+    const options: AxiosRequestConfig = {
+      'method': 'GET',
+      'url': `/api/dashboardFavorite?siteId=${this.auth.siteId}&viewId=${vizId}&apiToken=${this.auth.apiToken}&tableauUserId=${this.auth.tableauUserId}`
+    }
+
+    //    Make the API call and return the results
+    axios(options).then(response => { 
+      if (response.data.error){
+        //  Error with the API call, return false by default
+        console.log(console.error);
+      } else {
+        //  This API call returns a list of the user's favorites.  Need to parse the list and see if this view is included
+        thisComponent.setFavoriteIcon(response.data.isFavorite)
+      }
+    })
   }
 
   //  Method to update the dashboard's favorite status
   public setFavorite = (isFavorite:boolean) =>{
-    //  Business logic goes here
+
+    let thisComponent = this;
+
+    // Define options
+    const options: AxiosRequestConfig = {
+      'method': 'POST',
+      'data': {
+        'viewId': this.dashboard.id,
+        'viewName': this.dashboard.name,
+        'tableauUserId': this.auth.tableauUserId,
+        'siteId': this.auth.siteId,
+        'apiToken': this.auth.apiToken,
+        'markFavorite': !isFavorite
+      },
+      'url': `/api/dashboardFavorite`
+    }
+
+    //    Make the API call and return the results
+    axios(options).then(response => { 
+      if (response.data.error){
+        //  Return an empty string, 
+        console.log(console.error);
+      } else {
+        //  Favorite saved, update the icon
+        thisComponent.setFavoriteIcon(response.data.isFavorite)
+      }
+    })
   }
 
   //  Method to reset the dashboard filters
@@ -167,7 +210,36 @@ export class TableauEmbeddedVizComponent implements OnInit {
   
   //  Method to download the dashboard as a PDF
   public downloadPdf = () => {
-    // Business logic goes here
+
+    let dash = this.dashboard;
+
+    // Define option
+    const options: AxiosRequestConfig = {
+      'method': 'GET',
+      'responseType': 'arraybuffer',
+      'url': `/api/dashboardExport?apiToken=${this.auth.apiToken}&siteId=${this.auth.siteId}&viewId=${dash.id}`
+    }
+  
+    //    Make the API call to download the PDF
+    axios(options)
+      .then(response => {
+        
+          //Create a Blob from the PDF Stream
+          const newBlob = new Blob(
+            [response.data], 
+            {type: 'application/pdf'});
+
+          // Create a link pointing to the ObjectURL containing the blob.
+          const data = window.URL.createObjectURL(newBlob);
+          let link = document.createElement('a');
+          link.href = data;
+          link.download=`${dash.name}.pdf`;
+          link.click();
+          setTimeout(function(){
+            // For Firefox it is necessary to delay revoking the ObjectURL
+            window.URL.revokeObjectURL(data);
+          }, 100);
+      })
   }
   
   //  Open a modal window with more details of the workbook
@@ -183,8 +255,6 @@ export class TableauEmbeddedVizComponent implements OnInit {
     //  Business Logic goes here
     this.router.navigateByUrl('home');
   }
-  
-
 }
 
 //  Declare the component for providing more details via a modal window

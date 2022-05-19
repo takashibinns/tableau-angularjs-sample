@@ -23,3 +23,10 @@
   div.dashboard-card::after {
     content: "";
   }
+
+/*  Favorite icon */
+.favorite-icon-card {
+  color: #3f51b5;
+  left: 5px;
+  position: absolute;
+}
