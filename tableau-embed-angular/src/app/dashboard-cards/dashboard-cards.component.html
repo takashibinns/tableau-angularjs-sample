@@ -1,0 +1,17 @@
+<h1>Tableau Dashboards</h1>
+<div fxLayout="row wrap" fxLayoutGap="1em" class="dashboard-cards-container">
+  <div  class="dashboard-card" *ngFor="let dashboard of dashboards">
+    <mat-card class="mat-elevation-z4" >
+      <mat-card-header (click)="viewDashboard(dashboard)">
+        <mat-card-title><mat-icon *ngIf="dashboard.isFavorite" class="favorite-icon-card">favorite</mat-icon>{{ dashboard.name }}</mat-card-title>
+        <mat-card-subtitle>{{ dashboard.usage.totalViewCount }} views</mat-card-subtitle>
+      </mat-card-header>
+      <img mat-card-image class="tableau-preview" src="{{dashboard.preview}}" (click)="viewDashboard(dashboard)">
+      <mat-card-content>
+        <p>Workbook: {{ dashboard.workbook.name }}</p>
+        <p>Created by: {{ dashboard.owner.fullName }}</p>
+        <p>Last Updated: {{ dateFormatter(dashboard.updatedAt) }}</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

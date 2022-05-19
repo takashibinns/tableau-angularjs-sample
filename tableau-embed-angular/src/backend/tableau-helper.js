@@ -14,7 +14,7 @@ const tableauProject = process.env.TABLEAU_PROJECT || 'default'
 const helper = {
     //  Encrypt Username
     encryptUsername: function(username) {
-        //	Encrypt the username, using our secure key (env variable)
+        //    Encrypt the username, using our secure key (env variable)
         var b64 = CryptoJS.AES.encrypt(username, encryptionString).toString();
             e64 = CryptoJS.enc.Base64.parse(b64),
             encryptedUserId = e64.toString(CryptoJS.enc.Hex);
@@ -22,7 +22,7 @@ const helper = {
     },
     //  Decrypt Username
     decryptUserId: function(encryptedUserId) {
-        //	Decript the username, using our secure key
+        //    Decript the username, using our secure key
         var reb64 = CryptoJS.enc.Hex.parse(encryptedUserId);
         var bytes = reb64.toString(CryptoJS.enc.Base64);
         var decrypt = CryptoJS.AES.decrypt(bytes, encryptionString);
@@ -37,6 +37,19 @@ const helper = {
             site: tableauSite,
             project: tableauProject
         }
+    },
+    //  Build the Tableau Embed base URL
+    tableauEmbedBaseUrl: function(){
+
+        //  Embed API calls have a different base url, depending on what site is being used
+        if (tableauSite.length>0){
+            //  Using a named site
+            return `${tableauBaseUrl}/t/${tableauSite}`;
+        } else {
+            //  Using the default site
+            return `${tableauBaseUrl}`;
+        }
+
     },
     //  Build the Tableau REST API base URL
     tableauRestBaseUrl: function(siteId){
@@ -60,7 +73,6 @@ const helper = {
         }
         return headers
     },
-
     //  Safely traverse a javascript object
     getProp: function(fn, defaultVal) {
         try {

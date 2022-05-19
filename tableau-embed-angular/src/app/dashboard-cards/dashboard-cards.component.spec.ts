@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TableauEmbededVizComponent } from './tableau-embeded-viz.component';
+import { DashboardCardsComponent } from './dashboard-cards.component';
 
-describe('TableauEmbededVizComponent', () => {
-  let component: TableauEmbededVizComponent;
-  let fixture: ComponentFixture<TableauEmbededVizComponent>;
+describe('DashboardCardsComponent', () => {
+  let component: DashboardCardsComponent;
+  let fixture: ComponentFixture<DashboardCardsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TableauEmbededVizComponent ]
+      declarations: [ DashboardCardsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TableauEmbededVizComponent);
+    fixture = TestBed.createComponent(DashboardCardsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

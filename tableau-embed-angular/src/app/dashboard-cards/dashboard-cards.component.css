@@ -1,0 +1,32 @@
+/*  Define the card sizes   */
+.dashboard-card {
+    min-width: 300px;
+    max-width: 420px;
+    margin-bottom:1.5em;
+  }
+  
+  /*  Make sure the dashboard preview images scale  */
+  .tableau-preview {
+    height: 100%;
+    width: 100%;
+    margin-left: 0;
+  }
+  
+  /*  Align the cards evenly within each row  */
+  div.dashboard-cards-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  div.dashboard-card::before {
+    content: "";
+  }
+  div.dashboard-card::after {
+    content: "";
+  }
+
+/*  Favorite icon */
+.favorite-icon-card {
+  color: #3f51b5;
+  left: 5px;
+  position: absolute;
+}

@@ -3,38 +3,38 @@ const router = express.Router();
 const axios = require('axios');
 const tableauHelper = require('./tableau-helper');
 
-//  Get an authentication token using our connected app
+//  /api/login endpoint
 router.post('/', (req, res) => {
 
-	//  Get the login credentails from the POST request
+    //  Get the login credentails from the POST request
     const username = req.body.username,
           password = req.body.password;
     console.log(`Try authenticating as user: ${username}`)
 
-	//	Get the tableau server/online details
-	const tableau = tableauHelper.tableauDetails();
+    //    Get the tableau server/online details
+    const tableau = tableauHelper.tableauDetails();
 
-    //	Define the login url
+    //    Define the login url
     const loginUrl = `${tableau.baseUrl}/api/${tableau.apiVersion}/auth/signin`;
 
-	//	Define the payload
-	var body = {
-		"credentials": {
-		    "name": username,
-		    "password": password,
-		    "site": {
-		        "contentUrl": tableau.site
-		    }
-		}
-	}
+    //    Define the payload
+    var body = {
+        "credentials": {
+            "name": username,
+            "password": password,
+            "site": {
+                "contentUrl": tableau.site
+            }
+        }
+    }
 
-	// Define option
-	var options = {
-		'method':'POST',
+    // Define option
+    var options = {
+        'method':'POST',
         'headers': tableauHelper.tableauHeaders(),
-		'data': body,
-		'url': loginUrl
-	}
+        'data': body,
+        'url': loginUrl
+    }
 
     //  Make Login API call to Tableau
     axios(options)
@@ -42,21 +42,26 @@ router.post('/', (req, res) => {
 
         console.log(`Successfully authenticated user ${username}`)
 
-        //	Get the api token and site id
-		const token = response.data.credentials.token,
-            siteId = response.data.credentials.site.id;
+        //    Get the api token and site id
+        const token = response.data.credentials.token,
+            siteId = response.data.credentials.site.id,
+            tableauUserId = response.data.credentials.user.id;
 
-        //	Return the complete data object
+        //    Return the complete data object
         res.send({
             'encryptedUserId': tableauHelper.encryptUsername(username),
+            'tableauUserId': tableauUserId,
             'apiToken': token,
-            'siteId': siteId
+            'siteId': siteId,
+            'tableauBaseUrl': tableauHelper.tableauEmbedBaseUrl()
         })
     })
     .catch(function (error) {
         console.log(`Error: Tableau threw an error while trying to authenticate user ${username}`)
-        console.log(error);
-        res.send({})
+        let errorData = tableauHelper.getProp(error.response.data.error, {'detail': `Error logging in as user ${username}`})
+        res.send({
+            'error': errorData
+        })
     })
 })
 

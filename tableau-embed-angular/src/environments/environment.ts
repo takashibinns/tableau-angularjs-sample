@@ -3,10 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
-  tableauServer: {
-    baseUrl: "https://us-east-1.online.tableau.com"
-  }
+  production: false
 };
 
 /*

@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const btoa = require('btoa');
 const tableauHelper = require('./tableau-helper');
 
 //  Get an authentication token using our connected app
@@ -10,14 +9,10 @@ router.get('/', (req, res) => {
     //  Get the API Token needed to talk to Tableau
     const token = req.query.apiToken,
           siteId = req.query.siteId,
-          workbookId = req.query.workbookId,
           viewId = req.query.viewId;
 
-    //    Get the tableau server/online details
-    const tableau = tableauHelper.tableauDetails();
-
     //    Define the login url
-    const url = `${tableauHelper.tableauRestBaseUrl(siteId)}/workbooks/${workbookId}/views/${viewId}/previewImage`;
+    const url = `${tableauHelper.tableauRestBaseUrl(siteId)}/views/${viewId}/pdf`;
 
     // Define option
     var options = {
@@ -33,16 +28,12 @@ router.get('/', (req, res) => {
     axios(options)
     .then( response => {
 
-        //  Tableau returns an array buffer, need to base64 encode this to use in an image tag
-        const previewImage = btoa(response.data);
-        
-        //    Tableau Server responds with an string containing the image in PNG format, handle the base64 decoding client side
-        res.send({
-            data: `data:image/png;base64,${previewImage}`
-        });
+        //  Just forward the response from Tableau
+        res.set('Content-Type', 'application/pdf')
+        res.send(response.data);
     })
     .catch(function (error) {
-        console.log(`Error: Tableau threw an error while trying to fetch dashboards preview image via REST API`)
+        console.log(`Error: Tableau threw an error while trying to export dashboards as PDF via REST API`)
         console.log(error);
         res.send({
             error: true
